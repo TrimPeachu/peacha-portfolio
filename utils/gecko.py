@@ -3,7 +3,7 @@ from pycoingecko import CoinGeckoAPI
 cg = CoinGeckoAPI()
 
 def get_price(currency):
-    print(currency)
+    # print(currency)
     if currency == 'ADA':
         price = cg.get_price(ids ='cardano', vs_currencies = 'eur' , include_24hr_change='true')
         curr = 'cardano'
