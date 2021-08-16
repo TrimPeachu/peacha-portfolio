@@ -3,6 +3,7 @@ from pycoingecko import CoinGeckoAPI
 cg = CoinGeckoAPI()
 
 def get_price(currency):
+    print(currency)
     if currency == 'ADA':
         price = cg.get_price(ids ='cardano', vs_currencies = 'eur' , include_24hr_change='true')
         curr = 'cardano'
@@ -48,6 +49,53 @@ def get_price(currency):
     elif currency == 'SHIB':
         price = cg.get_price(ids = 'shiba-inu', vs_currencies = 'eur', include_24hr_change='true')
         curr = 'shiba-inu'
+    elif currency == 'BTC':
+        price = cg.get_price(ids = 'bitcoin', vs_currencies = 'eur', include_24hr_change='true')
+        curr = 'bitcoin'
+    elif currency == 'CRO':
+        price = cg.get_price(ids = 'crypto-com-chain', vs_currencies = 'eur', include_24hr_change='true')
+        curr = 'crypto-com-chain'
+    elif currency == 'ALGO':
+        price = cg.get_price(ids = 'algorand', vs_currencies = 'eur', include_24hr_change='true')
+        curr = 'algorand'
+    elif currency == 'TFUEL':
+        price = cg.get_price(ids = 'theta-fuel', vs_currencies = 'eur', include_24hr_change='true')
+        curr = 'theta-fuel'
+    elif currency == 'SOL':
+        price = cg.get_price(ids = 'solana', vs_currencies = 'eur', include_24hr_change='true')
+        curr = 'solana'
+    elif currency == 'REN':
+        price = cg.get_price(ids = 'republic-protocol', vs_currencies = 'eur', include_24hr_change='true')
+        curr = 'republic-protocol'
+    elif currency == 'FLOW':
+        price = cg.get_price(ids = 'flow', vs_currencies = 'eur', include_24hr_change='true')
+        curr = 'flow'
+    elif currency == 'AVAX':
+        price = cg.get_price(ids = 'avalanche-2', vs_currencies = 'eur', include_24hr_change='true')
+        curr = 'avalanche-2'
+    elif currency == '1INCH':
+        price = cg.get_price(ids = '1inch', vs_currencies = 'eur', include_24hr_change='true')
+        curr = '1inch'
+    elif currency == 'NMP':
+        price = cg.get_price(ids = 'neuromorphic-io', vs_currencies = 'eur', include_24hr_change='true')
+        curr = 'neuromorphic-io'
+    elif currency == 'VET':
+        price = cg.get_price(ids = 'vechain', vs_currencies = 'eur', include_24hr_change='true')
+        curr = 'vechain'
+    elif currency == 'EGLD':
+        price = cg.get_price(ids = 'elrond-erd-2', vs_currencies = 'eur', include_24hr_change='true')
+        curr = 'elrond-erd-2'
+    elif currency == 'ATOM':
+        price = cg.get_price(ids = 'cosmos', vs_currencies = 'eur', include_24hr_change='true')
+        curr = 'cosmos'
+    elif currency == 'ONE':
+        price = cg.get_price(ids = 'harmony', vs_currencies = 'eur', include_24hr_change='true')
+        curr = 'harmony'
+    elif currency == 'NMR':
+        price = cg.get_price(ids = 'numeraire', vs_currencies = 'eur', include_24hr_change='true')
+        curr = 'numeraire'
+
+
     clean_price = price.get(curr, {}).get('eur')
     clean_24 = price.get(curr, {}).get('eur_24h_change')
-    return(clean_price, clean_24)
+    return(clean_price, clean_24)   
