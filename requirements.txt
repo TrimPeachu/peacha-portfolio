@@ -3,3 +3,6 @@ numpy
 streamlit
 matplotlib
 pycoingecko
+gsheetsdb
+sqlalchemy
+pyu2f
