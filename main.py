@@ -3,13 +3,36 @@ import numpy as np
 import streamlit as st
 import matplotlib.pyplot as plt
 from utils.gecko import *
+import sqlite3
+from google.oauth2 import service_account
+from gsheetsdb import connect
 
+credentials = service_account.Credentials.from_service_account_info(
+    st.secrets["gcp_service_account"],
+    scopes=[
+        "https://www.googleapis.com/auth/spreadsheets",
+    ],
+)
+conn = connect(credentials=credentials)
 
-    
+# Perform SQL query on the Google Sheet.
+# Uses st.cache to only rerun when the query changes or after 10 min.
+@st.cache(ttl=600)
+def run_query(query):
+    rows = conn.execute(query, headers=1)
+    return rows
+
+sheet_url = st.secrets["private_gsheets_url"]
+rows = run_query(f'SELECT * FROM "{sheet_url}"')
+
 # Read df from csv, change , to . and float
-df = pd.read_csv('data\portfolio.csv', delimiter= ';')
-df = df.apply(lambda x: x.str.replace(',','.'))
-df = df.apply(pd.to_numeric, errors='ignore')
+
+df = pd.DataFrame(rows)
+print(df)
+
+# df = pd.read_csv('data\portfolio.csv', delimiter= ';')
+# df = df.apply(lambda x: x.str.replace(',','.'))
+# df = df.apply(pd.to_numeric, errors='ignore')
 
 # Get info from gecko to df
 for index, row in df.iterrows():
@@ -23,16 +46,16 @@ for index, row in df.iterrows():
 df_value = df.groupby(['COIN'])[['Current_Value', 'AMOUNT']].sum()
 df_value['Price'] = df_value['Current_Value'] / df_value['AMOUNT']
 df_price = df.groupby(['COIN'])[['Total_Price','AMOUNT']].sum()
-df_sold = df.groupby(['COIN'])[['Sold Amount','Sold Price', 'Sold Value']].sum()
-df_sold = df_sold[df_sold['Sold Amount'] > 0]
+df_sold = df.groupby(['COIN'])[['Sold_Amount','Sold_Price', 'Sold_Value']].sum()
+df_sold = df_sold[df_sold['Sold_Amount'] > 0]
 df_change = df.groupby(['COIN'])[['24hChange']].mean()
 
 
 # Calculate current amount and profit
 for index, row in df_value.iterrows():
     try:
-        df_value.at[index,'CurrAmount'] = df_value.at[index,'AMOUNT'] - df_sold.at[index, 'Sold Amount']
-        df_value.at[index, 'Profit'] = ((df_value.at[index, 'CurrAmount'] * df_value.at[index, 'Price']) + df_sold.at[index, 'Sold Value']) - df_price.at[index, 'Total_Price']
+        df_value.at[index,'CurrAmount'] = df_value.at[index,'AMOUNT'] - df_sold.at[index, 'Sold_Amount']
+        df_value.at[index, 'Profit'] = ((df_value.at[index, 'CurrAmount'] * df_value.at[index, 'Price']) + df_sold.at[index, 'Sold_Value']) - df_price.at[index, 'Total_Price']
 
     except KeyError:
         df_value.at[index, 'CurrAmount'] = df_value.at[index, 'AMOUNT']
@@ -41,8 +64,8 @@ for index, row in df_value.iterrows():
 # Calculate total profit
 total_profit = df_value['Profit'].sum()
 total_spent = df_price['Total_Price'].sum()
-total_sold = df_sold['Sold Value'].sum()
-net_spent = df_price['Total_Price'].sum() - df_sold['Sold Value'].sum()
+total_sold = df_sold['Sold_Value'].sum()
+net_spent = df_price['Total_Price'].sum() - df_sold['Sold_Value'].sum()
 
 # Sort df's
 final_df = df_value.drop(['AMOUNT','Current_Value'] ,axis=1)
