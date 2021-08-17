@@ -45,6 +45,7 @@ if user_input:
         df = df[df['Owner'] == 'Tomas']
     elif user_input == st.secrets['tomas_private']['pass2']:
         df = df[df['Owner'] == 'Dodo']
+    
 
     # Get info from gecko to df
 
@@ -115,4 +116,6 @@ if user_input:
         col2.write("### 24h Change%")
         col2.pyplot(plt)
 
+    else:
+        col1.write('Bad password')
 
