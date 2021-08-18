@@ -31,12 +31,13 @@ rows = run_query(f'SELECT * FROM "{sheet_url}"')
 
 df = pd.DataFrame(rows)
 
+user_input = st.text_input("Input password")
 
 # Split streamlit window into 2
 col1,col2 = st.columns((2,1))
 col1.write("# Crypto portfolio \n ### by TrimPeachu")
 
-user_input = st.text_input("Input password")
+
 
 if user_input:
     if user_input == st.secrets['tomas_private']['pass1']:
@@ -86,12 +87,12 @@ if user_input:
             df_change = df.groupby(['COIN'])[['24hChange']].mean()
 
 
+            total_value = 0
             # Calculate current amount and profit
             for index, row in df_value.iterrows():
                 try:
                     df_value.at[index,'CurrAmount'] = df_value.at[index,'AMOUNT'] - df_sold.at[index, 'Sold_Amount']
                     df_value.at[index, 'Profit'] = ((df_value.at[index, 'CurrAmount'] * df_value.at[index, 'Price']) + df_sold.at[index, 'Sold_Value']) - df_price.at[index, 'Total_Price']
-
                 except KeyError:
                     df_value.at[index, 'CurrAmount'] = df_value.at[index, 'AMOUNT']
                     df_value.at[index, 'Profit'] = (df_value.at[index, 'CurrAmount'] * df_value.at[index, 'Price']) - df_price.at[index, 'Total_Price']
@@ -101,6 +102,9 @@ if user_input:
             total_spent = df_price['Total_Price'].sum()
             total_sold = df_sold['Sold_Value'].sum()
             net_spent = df_price['Total_Price'].sum() - df_sold['Sold_Value'].sum()
+            total_value = df_value['Current_Value'].sum()
+            
+            print(df_price)
 
             # Sort df's
             final_df = df_value.drop(['AMOUNT','Current_Value'] ,axis=1)
@@ -149,6 +153,7 @@ if user_input:
 
             col1.write("#### TOTAL PROFIT: {:.2f} €".format(total_profit))
             col1.write("#### NET SPENT: {:.2f} €".format(net_spent))
+            col1.write("##### TOTAL VALUE: {:.2f} €".format(total_value))
             col1.write("##### TOTAL SPENT: {:.2f} €".format(total_spent))
             col1.write("##### TOTAL SOLD: {:.2f} €".format(total_sold))
 
