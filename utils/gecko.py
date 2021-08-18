@@ -1,5 +1,7 @@
+from typing_extensions import final
 from pycoingecko import CoinGeckoAPI
-
+from datetime import datetime
+import pandas as pd 
 cg = CoinGeckoAPI()
 
 def get_price(currency):
@@ -99,3 +101,110 @@ def get_price(currency):
     clean_price = price.get(curr, {}).get('eur')
     clean_24 = price.get(curr, {}).get('eur_24h_change')
     return(clean_price, clean_24)   
+
+def get_history(currency, timestamp, df):
+    if currency == 'ADA':
+        history_price = cg.get_coin_market_chart_range_by_id(id ='cardano', vs_currency = 'eur' , from_timestamp = '1619900343', to_timestamp = str(timestamp))
+        curr = 'cardano'
+    elif currency == 'LTC':
+        history_price = cg.get_coin_market_chart_range_by_id(id ='litecoin', vs_currency = 'eur', from_timestamp = '1619900343', to_timestamp = str(timestamp))
+        curr = 'litecoin'
+    elif currency == 'LINK':
+        history_price = cg.get_coin_market_chart_range_by_id(id ='chainlink', vs_currency = 'eur', from_timestamp = '1619900343', to_timestamp = str(timestamp))
+        curr = 'chainlink'
+    elif currency == 'UNI':
+        history_price = cg.get_coin_market_chart_range_by_id(id ='uniswap', vs_currency = 'eur', from_timestamp = '1619900343', to_timestamp = str(timestamp))
+        curr = 'uniswap'
+    elif currency == 'XRP':
+        history_price = cg.get_coin_market_chart_range_by_id(id ='ripple', vs_currency = 'eur', from_timestamp = '1619900343', to_timestamp = str(timestamp))
+        curr = 'ripple'
+    elif currency == 'ETH':
+        history_price = cg.get_coin_market_chart_range_by_id(id ='ethereum', vs_currency = 'eur', from_timestamp = '1619900343', to_timestamp = str(timestamp))
+        curr = 'ethereum'
+    elif currency == 'XLM':
+        history_price = cg.get_coin_market_chart_range_by_id(id ='stellar', vs_currency = 'eur', from_timestamp = '1619900343', to_timestamp = str(timestamp))
+        curr = 'stellar'
+    elif currency == 'THETA':
+        history_price = cg.get_coin_market_chart_range_by_id(id ='theta-token', vs_currency = 'eur', from_timestamp = '1619900343', to_timestamp = str(timestamp))
+        curr = 'theta-token'
+    elif currency == 'DOGE':
+        history_price = cg.get_coin_market_chart_range_by_id(id ='dogecoin', vs_currency = 'eur', from_timestamp = '1619900343', to_timestamp = str(timestamp))
+        curr = 'dogecoin'
+    elif currency == 'MATIC':
+        history_price = cg.get_coin_market_chart_range_by_id(id = 'matic-network', vs_currency = 'eur', from_timestamp = '1619900343', to_timestamp = str(timestamp))
+        curr = 'matic-network'
+    elif currency == 'EOS':
+        history_price = cg.get_coin_market_chart_range_by_id(id = 'eos', vs_currency = 'eur', from_timestamp = '1619900343', to_timestamp = str(timestamp))
+        curr = 'eos'
+    elif currency == 'DOT':
+        history_price = cg.get_coin_market_chart_range_by_id(id = 'polkadot', vs_currency = 'eur', from_timestamp = '1619900343', to_timestamp = str(timestamp))
+        curr = 'polkadot'
+    elif currency == 'BTT':
+        history_price = cg.get_coin_market_chart_range_by_id(id = 'bittorrent-2', vs_currency = 'eur', from_timestamp = '1619900343', to_timestamp = str(timestamp))
+        curr = 'bittorrent-2'
+    elif currency == 'ENJ':
+        history_price = cg.get_coin_market_chart_range_by_id(id = 'enjincoin', vs_currency = 'eur', from_timestamp = '1619900343', to_timestamp = str(timestamp))
+        curr = 'enjincoin'
+    elif currency == 'SHIB':
+        history_price = cg.get_coin_market_chart_range_by_id(id = 'shiba-inu', vs_currency = 'eur', from_timestamp = '1619900343', to_timestamp = str(timestamp))
+        curr = 'shiba-inu'
+    elif currency == 'BTC':
+        history_price = cg.get_coin_market_chart_range_by_id(id = 'bitcoin', vs_currency = 'eur', from_timestamp = '1619900343', to_timestamp = str(timestamp))
+        curr = 'bitcoin'
+    elif currency == 'CRO':
+        history_price = cg.get_coin_market_chart_range_by_id(id = 'crypto-com-chain', vs_currency = 'eur', from_timestamp = '1619900343', to_timestamp = str(timestamp))
+        curr = 'crypto-com-chain'
+    elif currency == 'ALGO':
+        history_price = cg.get_coin_market_chart_range_by_id(id = 'algorand', vs_currency = 'eur', from_timestamp = '1619900343', to_timestamp = str(timestamp))
+        curr = 'algorand'
+    elif currency == 'TFUEL':
+        history_price = cg.get_coin_market_chart_range_by_id(id = 'theta-fuel', vs_currency = 'eur', from_timestamp = '1619900343', to_timestamp = str(timestamp))
+        curr = 'theta-fuel'
+    elif currency == 'SOL':
+        history_price = cg.get_coin_market_chart_range_by_id(id = 'solana', vs_currency = 'eur', from_timestamp = '1619900343', to_timestamp = str(timestamp))
+        curr = 'solana'
+    elif currency == 'REN':
+        history_price = cg.get_coin_market_chart_range_by_id(id = 'republic-protocol', vs_currency = 'eur', from_timestamp = '1619900343', to_timestamp = str(timestamp))
+        curr = 'republic-protocol'
+    elif currency == 'FLOW':
+        history_price = cg.get_coin_market_chart_range_by_id(id = 'flow', vs_currency = 'eur', from_timestamp = '1619900343', to_timestamp = str(timestamp))
+        curr = 'flow'
+    elif currency == 'AVAX':
+        history_price = cg.get_coin_market_chart_range_by_id(id = 'avalanche-2', vs_currency = 'eur', from_timestamp = '1619900343', to_timestamp = str(timestamp))
+        curr = 'avalanche-2'
+    elif currency == '1INCH':
+        history_price = cg.get_coin_market_chart_range_by_id(id = '1inch', vs_currency = 'eur', from_timestamp = '1619900343', to_timestamp = str(timestamp))
+        curr = '1inch'
+    elif currency == 'NMP':
+        history_price = cg.get_coin_market_chart_range_by_id(id = 'neuromorphic-io', vs_currency = 'eur', from_timestamp = '1619900343', to_timestamp = str(timestamp))
+        curr = 'neuromorphic-io'
+    elif currency == 'VET':
+        history_price = cg.get_coin_market_chart_range_by_id(id = 'vechain', vs_currency = 'eur', from_timestamp = '1619900343', to_timestamp = str(timestamp))
+        curr = 'vechain'
+    elif currency == 'EGLD':
+        history_price = cg.get_coin_market_chart_range_by_id(id = 'elrond-erd-2', vs_currency = 'eur', from_timestamp = '1619900343', to_timestamp = str(timestamp))
+        curr = 'elrond-erd-2'
+    elif currency == 'ATOM':
+        history_price = cg.get_coin_market_chart_range_by_id(id = 'cosmos', vs_currency = 'eur', from_timestamp = '1619900343', to_timestamp = str(timestamp))
+        curr = 'cosmos'
+    elif currency == 'ONE':
+        history_price = cg.get_coin_market_chart_range_by_id(id = 'harmony', vs_currency = 'eur', from_timestamp = '1619900343', to_timestamp = str(timestamp))
+        curr = 'harmony'
+    elif currency == 'NMR':
+        history_price = cg.get_coin_market_chart_range_by_id(id = 'numeraire', vs_currency = 'eur', from_timestamp = '1619900343', to_timestamp = str(timestamp))
+        curr = 'numeraire'
+    
+    history_price = history_price['prices']
+
+    if len(df) > 0:
+        just_history_price = [el[1] for el in history_price]
+        try:
+            df[currency] = just_history_price
+        except:
+            print(currency, just_history_price, history_price)
+        
+    else:
+        df = pd.DataFrame(history_price, columns = ['Date', currency])
+
+    return df
+    

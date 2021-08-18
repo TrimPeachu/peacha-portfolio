@@ -6,6 +6,8 @@ from utils.gecko import *
 import sqlite3
 from google.oauth2 import service_account
 from gsheetsdb import connect
+# from historic import get_history
+from datetime import datetime
 
 credentials = service_account.Credentials.from_service_account_info(
     st.secrets["gcp_service_account"],
@@ -28,11 +30,7 @@ rows = run_query(f'SELECT * FROM "{sheet_url}"')
 # Read df from csv, change , to . and float
 
 df = pd.DataFrame(rows)
-# print(df)
 
-# df = pd.read_csv('data\portfolio.csv', delimiter= ';')
-# df = df.apply(lambda x: x.str.replace(',','.'))
-# df = df.apply(pd.to_numeric, errors='ignore')
 
 # Split streamlit window into 2
 col1,col2 = st.columns((2,1))
@@ -57,6 +55,12 @@ if user_input:
     if user_input == st.secrets['tomas_private']['pass1'] or st.secrets['tomas_private']['pass2']:
         if continue_script:
             coins = df['COIN'].unique().tolist()
+            # coins2= [x for x in coins if x not in  ['UNI', 'XRP', 'THETA', 'BTT', 'ENJ', 'SHIB']]
+
+            ct = datetime.now()
+            ts = ct.timestamp()
+
+
             price_dict = {}
             change_dict = {}
 
@@ -106,6 +110,41 @@ if user_input:
             df_change = df_change.sort_values(by = ['24hChange'] , ascending = True)
 
 
+            history_df = pd.DataFrame()
+
+
+            for coin in coins:
+                if len(history_df) > 0:
+                    history_df[coin] = get_history(coin, ts, history_df)[coin]
+                else:
+                    history_df = history_df.append(get_history(coin, ts, history_df))
+            
+            history_df['Date'] = pd.to_datetime(history_df['Date'], unit = 'ms').dt.normalize()
+
+            currencies = history_df.columns.tolist()
+            currencies[:] = [x for x in currencies if x != 'Date']
+
+
+            history_df['Value'] = 0
+
+            for coin in currencies:
+                for index, row in history_df.iterrows():
+                    history_df.at[index, 'Value'] = history_df.at[index, 'Value'] + (history_df.at[index, coin]*final_df.at[coin,'CurrAmount'])
+
+
+            price = df_price.sum(axis=0)
+            price = price['Total_Price']
+            sold = df_sold.sum(axis=0)
+            sold = sold['Sold_Value']
+
+            history_df['Profit'] = history_df['Value'] + sold - price
+            history_df = history_df.set_index('Date')
+            history_profit = history_df['Profit'] 
+
+            print(history_df)
+            print(history_profit)
+
+
             # Show main stats
 
             col1.write("#### TOTAL PROFIT: {:.2f} €".format(total_profit))
@@ -121,6 +160,10 @@ if user_input:
             df_change['24hChange'].plot(kind='barh', color=df_change.positive_change.map({True: 'g', False: 'r'}))
             col2.write("### 24h Change%")
             col2.pyplot(plt)
+
+            # col1.checkbox(label: show
+            st.line_chart(history_profit)
+            st.dataframe(history_df)
 
         else:
             col1.write('Try again')
