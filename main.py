@@ -8,6 +8,8 @@ from google.oauth2 import service_account
 from gsheetsdb import connect
 # from historic import get_history
 from datetime import datetime
+from streamlit_echarts import st_echarts
+
 
 credentials = service_account.Credentials.from_service_account_info(
     st.secrets["gcp_service_account"],
@@ -31,11 +33,13 @@ rows = run_query(f'SELECT * FROM "{sheet_url}"')
 
 df = pd.DataFrame(rows)
 
-user_input = st.text_input("Input password")
+with st.sidebar:
+    user_input = st.text_input("Input password")
+    
 
 # Split streamlit window into 2
 col1,col2 = st.columns((2,1))
-col1.write("# Crypto portfolio \n ### by TrimPeachu")
+
 
 
 
@@ -97,12 +101,14 @@ if user_input:
                     df_value.at[index, 'CurrAmount'] = df_value.at[index, 'AMOUNT']
                     df_value.at[index, 'Profit'] = (df_value.at[index, 'CurrAmount'] * df_value.at[index, 'Price']) - df_price.at[index, 'Total_Price']
 
+
+            print(df_value)
             # Calculate total profit
             total_profit = df_value['Profit'].sum()
             total_spent = df_price['Total_Price'].sum()
             total_sold = df_sold['Sold_Value'].sum()
             net_spent = df_price['Total_Price'].sum() - df_sold['Sold_Value'].sum()
-            total_value = df_value['Current_Value'].sum()
+            total_value = (df_value['Price']*df_value['CurrAmount']).sum()
             
             print(df_price)
 
@@ -114,43 +120,9 @@ if user_input:
             df_change = df_change.sort_values(by = ['24hChange'] , ascending = True)
 
 
-            history_df = pd.DataFrame()
-
-
-            for coin in coins:
-                if len(history_df) > 0:
-                    history_df[coin] = get_history(coin, ts, history_df)[coin]
-                else:
-                    history_df = history_df.append(get_history(coin, ts, history_df))
-            
-            history_df['Date'] = pd.to_datetime(history_df['Date'], unit = 'ms').dt.normalize()
-
-            currencies = history_df.columns.tolist()
-            currencies[:] = [x for x in currencies if x != 'Date']
-
-
-            history_df['Value'] = 0
-
-            for coin in currencies:
-                for index, row in history_df.iterrows():
-                    history_df.at[index, 'Value'] = history_df.at[index, 'Value'] + (history_df.at[index, coin]*final_df.at[coin,'CurrAmount'])
-
-
-            price = df_price.sum(axis=0)
-            price = price['Total_Price']
-            sold = df_sold.sum(axis=0)
-            sold = sold['Sold_Value']
-
-            history_df['Profit'] = history_df['Value'] + sold - price
-            history_df = history_df.set_index('Date')
-            history_profit = history_df['Profit'] 
-
-            print(history_df)
-            print(history_profit)
-
 
             # Show main stats
-
+            col1.write("# Crypto portfolio \n ### by TrimPeachu")
             col1.write("#### TOTAL PROFIT: {:.2f} €".format(total_profit))
             col1.write("#### NET SPENT: {:.2f} €".format(net_spent))
             col1.write("##### TOTAL VALUE: {:.2f} €".format(total_value))
@@ -166,9 +138,53 @@ if user_input:
             col2.write("### 24h Change%")
             col2.pyplot(plt)
 
-            # col1.checkbox(label: show
-            st.line_chart(history_profit)
-            st.dataframe(history_df)
+            # history_option = st.selectbox("Would you like to see your portfolio profit history chart?" ('Yes', 'No'))
+            
+            if st.button("Show history chart"):
+                history_df = pd.DataFrame()
+
+
+                for coin in coins:
+                    if len(history_df) > 0:
+                        history_df[coin] = get_history(coin, ts, history_df)[coin]
+                    else:
+                        history_df = history_df.append(get_history(coin, ts, history_df))
+                
+                history_df['Date'] = pd.to_datetime(history_df['Date'], unit = 'ms').dt.normalize()
+
+                currencies = history_df.columns.tolist()
+                currencies[:] = [x for x in currencies if x != 'Date']
+
+
+                history_df['Value'] = 0
+
+                for coin in currencies:
+                    for index, row in history_df.iterrows():
+                        history_df.at[index, 'Value'] = history_df.at[index, 'Value'] + (history_df.at[index, coin]*final_df.at[coin,'CurrAmount'])
+
+
+                price = df_price.sum(axis=0)
+                price = price['Total_Price']
+                sold = df_sold.sum(axis=0)
+                sold = sold['Sold_Value']
+
+                history_df['Profit'] = history_df['Value'] + sold - price
+                history_df = history_df.set_index('Date')
+                history_profit = history_df['Profit'] 
+
+                print(history_df)
+                print(history_profit)
+
+                st.line_chart(history_profit)
+                st.dataframe(history_df)
+            
+            # if st.button('Show my diversity'):
+            #    plt.figure(figsize=(16,8))
+            #    ax1 = plt.subplot(121,aspect='equal')
+            #    df_price.plot(kind='pie', y= df_price['Total_Price'], ax = ax1, labels = df_price['COIN'])
+            #    st.write(plt.show())
+
+            
 
         else:
             col1.write('Try again')
