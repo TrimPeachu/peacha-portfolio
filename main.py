@@ -8,7 +8,6 @@ from google.oauth2 import service_account
 from gsheetsdb import connect
 # from historic import get_history
 from datetime import datetime
-from streamlit_echarts import st_echarts
 
 
 credentials = service_account.Credentials.from_service_account_info(
