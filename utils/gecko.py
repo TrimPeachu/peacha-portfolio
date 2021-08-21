@@ -207,4 +207,127 @@ def get_history(currency, timestamp, df):
         df = pd.DataFrame(history_price, columns = ['Date', currency])
 
     return df
+
+
+def get_today_chart(currency, start_day, timestamp, df):
+    if currency == 'ADA':
+        today_price = cg.get_coin_market_chart_range_by_id(id ='cardano', vs_currency = 'eur' , from_timestamp = start_day, to_timestamp = str(timestamp))
+        curr = 'cardano'
+    elif currency == 'LTC':
+        today_price = cg.get_coin_market_chart_range_by_id(id ='litecoin', vs_currency = 'eur', from_timestamp = start_day, to_timestamp = str(timestamp))
+        curr = 'litecoin'
+    elif currency == 'LINK':
+        today_price = cg.get_coin_market_chart_range_by_id(id ='chainlink', vs_currency = 'eur', from_timestamp = start_day, to_timestamp = str(timestamp))
+        curr = 'chainlink'
+    elif currency == 'UNI':
+        today_price = cg.get_coin_market_chart_range_by_id(id ='uniswap', vs_currency = 'eur', from_timestamp = start_day, to_timestamp = str(timestamp))
+        curr = 'uniswap'
+    elif currency == 'XRP':
+        today_price = cg.get_coin_market_chart_range_by_id(id ='ripple', vs_currency = 'eur', from_timestamp = start_day, to_timestamp = str(timestamp))
+        curr = 'ripple'
+    elif currency == 'ETH':
+        today_price = cg.get_coin_market_chart_range_by_id(id ='ethereum', vs_currency = 'eur', from_timestamp = start_day, to_timestamp = str(timestamp))
+        curr = 'ethereum'
+    elif currency == 'XLM':
+        today_price = cg.get_coin_market_chart_range_by_id(id ='stellar', vs_currency = 'eur', from_timestamp = start_day, to_timestamp = str(timestamp))
+        curr = 'stellar'
+    elif currency == 'THETA':
+        today_price = cg.get_coin_market_chart_range_by_id(id ='theta-token', vs_currency = 'eur', from_timestamp = start_day, to_timestamp = str(timestamp))
+        curr = 'theta-token'
+    elif currency == 'DOGE':
+        today_price = cg.get_coin_market_chart_range_by_id(id ='dogecoin', vs_currency = 'eur', from_timestamp = start_day, to_timestamp = str(timestamp))
+        curr = 'dogecoin'
+    elif currency == 'MATIC':
+        today_price = cg.get_coin_market_chart_range_by_id(id = 'matic-network', vs_currency = 'eur', from_timestamp = start_day, to_timestamp = str(timestamp))
+        curr = 'matic-network'
+    elif currency == 'EOS':
+        today_price = cg.get_coin_market_chart_range_by_id(id = 'eos', vs_currency = 'eur', from_timestamp = start_day, to_timestamp = str(timestamp))
+        curr = 'eos'
+    elif currency == 'DOT':
+        today_price = cg.get_coin_market_chart_range_by_id(id = 'polkadot', vs_currency = 'eur', from_timestamp = start_day, to_timestamp = str(timestamp))
+        curr = 'polkadot'
+    elif currency == 'BTT':
+        today_price = cg.get_coin_market_chart_range_by_id(id = 'bittorrent-2', vs_currency = 'eur', from_timestamp = start_day, to_timestamp = str(timestamp))
+        curr = 'bittorrent-2'
+    elif currency == 'ENJ':
+        today_price = cg.get_coin_market_chart_range_by_id(id = 'enjincoin', vs_currency = 'eur', from_timestamp = start_day, to_timestamp = str(timestamp))
+        curr = 'enjincoin'
+    elif currency == 'SHIB':
+        today_price = cg.get_coin_market_chart_range_by_id(id = 'shiba-inu', vs_currency = 'eur', from_timestamp = start_day, to_timestamp = str(timestamp))
+        curr = 'shiba-inu'
+    elif currency == 'BTC':
+        today_price = cg.get_coin_market_chart_range_by_id(id = 'bitcoin', vs_currency = 'eur', from_timestamp = start_day, to_timestamp = str(timestamp))
+        curr = 'bitcoin'
+    elif currency == 'CRO':
+        today_price = cg.get_coin_market_chart_range_by_id(id = 'crypto-com-chain', vs_currency = 'eur', from_timestamp = start_day, to_timestamp = str(timestamp))
+        curr = 'crypto-com-chain'
+    elif currency == 'ALGO':
+        today_price = cg.get_coin_market_chart_range_by_id(id = 'algorand', vs_currency = 'eur', from_timestamp = start_day, to_timestamp = str(timestamp))
+        curr = 'algorand'
+    elif currency == 'TFUEL':
+        today_price = cg.get_coin_market_chart_range_by_id(id = 'theta-fuel', vs_currency = 'eur', from_timestamp = start_day, to_timestamp = str(timestamp))
+        curr = 'theta-fuel'
+    elif currency == 'SOL':
+        today_price = cg.get_coin_market_chart_range_by_id(id = 'solana', vs_currency = 'eur', from_timestamp = start_day, to_timestamp = str(timestamp))
+        curr = 'solana'
+    elif currency == 'REN':
+        today_price = cg.get_coin_market_chart_range_by_id(id = 'republic-protocol', vs_currency = 'eur', from_timestamp = start_day, to_timestamp = str(timestamp))
+        curr = 'republic-protocol'
+    elif currency == 'FLOW':
+        today_price = cg.get_coin_market_chart_range_by_id(id = 'flow', vs_currency = 'eur', from_timestamp = start_day, to_timestamp = str(timestamp))
+        curr = 'flow'
+    elif currency == 'AVAX':
+        today_price = cg.get_coin_market_chart_range_by_id(id = 'avalanche-2', vs_currency = 'eur', from_timestamp = start_day, to_timestamp = str(timestamp))
+        curr = 'avalanche-2'
+    elif currency == '1INCH':
+        today_price = cg.get_coin_market_chart_range_by_id(id = '1inch', vs_currency = 'eur', from_timestamp = start_day, to_timestamp = str(timestamp))
+        curr = '1inch'
+    elif currency == 'NMP':
+        today_price = cg.get_coin_market_chart_range_by_id(id = 'neuromorphic-io', vs_currency = 'eur', from_timestamp = start_day, to_timestamp = str(timestamp))
+        curr = 'neuromorphic-io'
+    elif currency == 'VET':
+        today_price = cg.get_coin_market_chart_range_by_id(id = 'vechain', vs_currency = 'eur', from_timestamp = start_day, to_timestamp = str(timestamp))
+        curr = 'vechain'
+    elif currency == 'EGLD':
+        today_price = cg.get_coin_market_chart_range_by_id(id = 'elrond-erd-2', vs_currency = 'eur', from_timestamp = start_day, to_timestamp = str(timestamp))
+        curr = 'elrond-erd-2'
+    elif currency == 'ATOM':
+        today_price = cg.get_coin_market_chart_range_by_id(id = 'cosmos', vs_currency = 'eur', from_timestamp = start_day, to_timestamp = str(timestamp))
+        curr = 'cosmos'
+    elif currency == 'ONE':
+        today_price = cg.get_coin_market_chart_range_by_id(id = 'harmony', vs_currency = 'eur', from_timestamp = start_day, to_timestamp = str(timestamp))
+        curr = 'harmony'
+    elif currency == 'NMR':
+        today_price = cg.get_coin_market_chart_range_by_id(id = 'numeraire', vs_currency = 'eur', from_timestamp = start_day, to_timestamp = str(timestamp))
+        curr = 'numeraire'
     
+
+    today_price = today_price['prices']
+
+    if len(df) > 0:
+        rows = df.shape[0]
+        just_today_price = [el[1] for el in today_price]
+        difference = len(just_today_price) - rows 
+
+        
+        if difference != 0:
+            if difference < 0: 
+                difference = (difference * (-1))
+                print(difference)
+                for i in range(difference):
+                    just_today_price.append(just_today_price[-1])
+            elif difference > 0:
+                for i in range(difference):
+                    del just_today_price[-1]
+
+
+        # try:
+        df[currency] = just_today_price
+        print(df)
+        # except:
+            # print(currency, just_today_price, today_price)
+        
+    else:
+        df = pd.DataFrame(today_price, columns = ['Date', currency])
+
+    return df

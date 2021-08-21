@@ -7,7 +7,7 @@ import sqlite3
 from google.oauth2 import service_account
 from gsheetsdb import connect
 # from historic import get_history
-from datetime import datetime
+from datetime import datetime, time, timedelta
 
 
 credentials = service_account.Credentials.from_service_account_info(
@@ -62,6 +62,11 @@ if user_input:
             # coins2= [x for x in coins if x not in  ['UNI', 'XRP', 'THETA', 'BTT', 'ENJ', 'SHIB']]
 
             ct = datetime.now()
+            start_day = datetime.combine(datetime.now(), time()) 
+            week_start = start_day - timedelta(days=start_day.weekday())
+            print(week_start)
+            day_start_ts = start_day.timestamp()
+            week_start_ts = week_start.timestamp()
             ts = ct.timestamp()
 
 
@@ -176,6 +181,88 @@ if user_input:
 
                 st.line_chart(history_profit)
                 st.dataframe(history_df)
+            
+            if st.button("Show today's movement"):
+                today_df = pd.DataFrame()
+                print(ts)
+                print(day_start_ts)
+
+                for coin in coins:
+                    if len(today_df) > 0:
+                        today_df[coin] = get_today_chart(coin,day_start_ts,ts,today_df)[coin]
+                    else:
+                        today_df = today_df.append(get_today_chart(coin,day_start_ts,ts,today_df))
+                
+                
+                today_df['Date'] = pd.to_datetime(today_df['Date'], unit = 'ms')
+
+                currencies = today_df.columns.tolist()
+                currencies[:] = [x for x in currencies if x != 'Date']
+
+
+                today_df['Value'] = 0
+
+                for coin in currencies:
+                    for index, row in today_df.iterrows():
+                        today_df.at[index, 'Value'] = today_df.at[index, 'Value'] + (today_df.at[index, coin]*final_df.at[coin,'CurrAmount'])
+
+
+                price = df_price.sum(axis=0)
+                price = price['Total_Price']
+                sold = df_sold.sum(axis=0)
+                sold = sold['Sold_Value']
+
+                today_df['Profit'] = today_df['Value'] + sold - price
+                today_df = today_df.set_index('Date')
+                today_profit = today_df['Profit'] 
+
+                print(today_df)
+                print(today_profit)
+
+                st.line_chart(today_profit)
+                st.dataframe(today_df)
+
+                        
+            if st.button("Show this week's movement"):
+                week_df = pd.DataFrame()
+                print(ts)
+                print(week_start_ts)
+
+                for coin in coins:
+                    if len(week_df) > 0:
+                        week_df[coin] = get_today_chart(coin,week_start_ts,ts,week_df)[coin]
+                    else:
+                        week_df = week_df.append(get_today_chart(coin,week_start_ts,ts,week_df))
+                
+                
+                week_df['Date'] = pd.to_datetime(week_df['Date'], unit = 'ms')
+
+                currencies = week_df.columns.tolist()
+                currencies[:] = [x for x in currencies if x != 'Date']
+
+
+                week_df['Value'] = 0
+
+                for coin in currencies:
+                    for index, row in week_df.iterrows():
+                        week_df.at[index, 'Value'] = week_df.at[index, 'Value'] + (week_df.at[index, coin]*final_df.at[coin,'CurrAmount'])
+
+
+                price = df_price.sum(axis=0)
+                price = price['Total_Price']
+                sold = df_sold.sum(axis=0)
+                sold = sold['Sold_Value']
+
+                week_df['Profit'] = week_df['Value'] + sold - price
+                week_df = week_df.set_index('Date')
+                week_profit = week_df['Profit'] 
+
+                print(week_df)
+                print(week_profit)
+
+                st.line_chart(week_profit)
+                st.dataframe(week_df)
+            
             
             # if st.button('Show my diversity'):
             #    plt.figure(figsize=(16,8))
