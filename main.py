@@ -9,6 +9,12 @@ from gsheetsdb import connect
 # from historic import get_history
 from datetime import datetime, time, timedelta
 
+st.set_page_config(
+   page_title="Crypto Portfolio",
+     page_icon='icon.ico',
+     initial_sidebar_state="expanded",
+ )
+
 
 credentials = service_account.Credentials.from_service_account_info(
     st.secrets["gcp_service_account"],
@@ -21,6 +27,7 @@ conn = connect(credentials=credentials)
 # Perform SQL query on the Google Sheet.
 # Uses st.cache to only rerun when the query changes or after 10 min.
 # @st.cache(ttl=600)
+@st.cache
 def run_query(query):
     rows = conn.execute(query, headers=1)
     return rows
@@ -33,11 +40,15 @@ rows = run_query(f'SELECT * FROM "{sheet_url}"')
 df = pd.DataFrame(rows)
 
 with st.sidebar:
-    user_input = st.text_input("Input password")
+    # with st.form:
+    # st.
+    st.write("## LOGIN:")
+    user_input = st.text_input("Input password", type= 'password')
     
 
 # Split streamlit window into 2
 col1,col2 = st.columns((2,1))
+page = st.columns(1)
 
 
 
@@ -143,125 +154,126 @@ if user_input:
             col2.pyplot(plt)
 
             # history_option = st.selectbox("Would you like to see your portfolio profit history chart?" ('Yes', 'No'))
-            
-            if st.button("Show history chart"):
-                history_df = pd.DataFrame()
-
-
-                for coin in coins:
-                    if len(history_df) > 0:
-                        history_df[coin] = get_history(coin, ts, history_df)[coin]
-                    else:
-                        history_df = history_df.append(get_history(coin, ts, history_df))
+            with st.sidebar:
                 
-                history_df['Date'] = pd.to_datetime(history_df['Date'], unit = 'ms').dt.normalize()
-
-                currencies = history_df.columns.tolist()
-                currencies[:] = [x for x in currencies if x != 'Date']
+                if st.button("Show history chart"):
+                    history_df = pd.DataFrame()
 
 
-                history_df['Value'] = 0
+                    for coin in coins:
+                        if len(history_df) > 0:
+                            history_df[coin] = get_history(coin, ts, history_df)[coin]
+                        else:
+                            history_df = history_df.append(get_history(coin, ts, history_df))
+                    
+                    history_df['Date'] = pd.to_datetime(history_df['Date'], unit = 'ms').dt.normalize()
 
-                for coin in currencies:
-                    for index, row in history_df.iterrows():
-                        history_df.at[index, 'Value'] = history_df.at[index, 'Value'] + (history_df.at[index, coin]*final_df.at[coin,'CurrAmount'])
+                    currencies = history_df.columns.tolist()
+                    currencies[:] = [x for x in currencies if x != 'Date']
 
 
-                price = df_price.sum(axis=0)
-                price = price['Total_Price']
-                sold = df_sold.sum(axis=0)
-                sold = sold['Sold_Value']
+                    history_df['Value'] = 0
 
-                history_df['Profit'] = history_df['Value'] + sold - price
-                history_df = history_df.set_index('Date')
-                history_profit = history_df['Profit'] 
+                    for coin in currencies:
+                        for index, row in history_df.iterrows():
+                            history_df.at[index, 'Value'] = history_df.at[index, 'Value'] + (history_df.at[index, coin]*final_df.at[coin,'CurrAmount'])
 
-                print(history_df)
-                print(history_profit)
 
-                st.line_chart(history_profit)
-                st.dataframe(history_df)
-            
-            if st.button("Show today's movement"):
-                today_df = pd.DataFrame()
-                print(ts)
-                print(day_start_ts)
+                    price = df_price.sum(axis=0)
+                    price = price['Total_Price']
+                    sold = df_sold.sum(axis=0)
+                    sold = sold['Sold_Value']
 
-                for coin in coins:
-                    if len(today_df) > 0:
-                        today_df[coin] = get_today_chart(coin,day_start_ts,ts,today_df)[coin]
-                    else:
-                        today_df = today_df.append(get_today_chart(coin,day_start_ts,ts,today_df))
+                    history_df['Profit'] = history_df['Value'] + sold - price
+                    history_df = history_df.set_index('Date')
+                    history_profit = history_df['Profit'] 
+
+                    print(history_df)
+                    print(history_profit)
+
+                    col1.line_chart(history_profit)
+                    col1.dataframe(history_df)
                 
-                
-                today_df['Date'] = pd.to_datetime(today_df['Date'], unit = 'ms')
+                if st.button("Show today's movement"):
+                    today_df = pd.DataFrame()
+                    print(ts)
+                    print(day_start_ts)
 
-                currencies = today_df.columns.tolist()
-                currencies[:] = [x for x in currencies if x != 'Date']
+                    for coin in coins:
+                        if len(today_df) > 0:
+                            today_df[coin] = get_today_chart(coin,day_start_ts,ts,today_df)[coin]
+                        else:
+                            today_df = today_df.append(get_today_chart(coin,day_start_ts,ts,today_df))
+                    
+                    
+                    today_df['Date'] = pd.to_datetime(today_df['Date'], unit = 'ms')
 
-
-                today_df['Value'] = 0
-
-                for coin in currencies:
-                    for index, row in today_df.iterrows():
-                        today_df.at[index, 'Value'] = today_df.at[index, 'Value'] + (today_df.at[index, coin]*final_df.at[coin,'CurrAmount'])
-
-
-                price = df_price.sum(axis=0)
-                price = price['Total_Price']
-                sold = df_sold.sum(axis=0)
-                sold = sold['Sold_Value']
-
-                today_df['Profit'] = today_df['Value'] + sold - price
-                today_df = today_df.set_index('Date')
-                today_profit = today_df['Profit'] 
-
-                print(today_df)
-                print(today_profit)
-
-                st.line_chart(today_profit)
-                st.dataframe(today_df)
-
-                        
-            if st.button("Show this week's movement"):
-                week_df = pd.DataFrame()
-                print(ts)
-                print(week_start_ts)
-
-                for coin in coins:
-                    if len(week_df) > 0:
-                        week_df[coin] = get_today_chart(coin,week_start_ts,ts,week_df)[coin]
-                    else:
-                        week_df = week_df.append(get_today_chart(coin,week_start_ts,ts,week_df))
-                
-                
-                week_df['Date'] = pd.to_datetime(week_df['Date'], unit = 'ms')
-
-                currencies = week_df.columns.tolist()
-                currencies[:] = [x for x in currencies if x != 'Date']
+                    currencies = today_df.columns.tolist()
+                    currencies[:] = [x for x in currencies if x != 'Date']
 
 
-                week_df['Value'] = 0
+                    today_df['Value'] = 0
 
-                for coin in currencies:
-                    for index, row in week_df.iterrows():
-                        week_df.at[index, 'Value'] = week_df.at[index, 'Value'] + (week_df.at[index, coin]*final_df.at[coin,'CurrAmount'])
+                    for coin in currencies:
+                        for index, row in today_df.iterrows():
+                            today_df.at[index, 'Value'] = today_df.at[index, 'Value'] + (today_df.at[index, coin]*final_df.at[coin,'CurrAmount'])
 
 
-                price = df_price.sum(axis=0)
-                price = price['Total_Price']
-                sold = df_sold.sum(axis=0)
-                sold = sold['Sold_Value']
+                    price = df_price.sum(axis=0)
+                    price = price['Total_Price']
+                    sold = df_sold.sum(axis=0)
+                    sold = sold['Sold_Value']
 
-                week_df['Profit'] = week_df['Value'] + sold - price
-                week_df = week_df.set_index('Date')
-                week_profit = week_df['Profit'] 
+                    today_df['Profit'] = today_df['Value'] + sold - price
+                    today_df = today_df.set_index('Date')
+                    today_profit = today_df['Profit'] 
 
-                print(week_df)
-                print(week_profit)
+                    print(today_df)
+                    print(today_profit)
 
-                st.line_chart(week_profit)
-                st.dataframe(week_df)
+                    col1.line_chart(today_profit)
+                    col1.dataframe(today_df)
+
+                            
+                if st.button("Show this week's movement"):
+                    week_df = pd.DataFrame()
+                    print(ts)
+                    print(week_start_ts)
+
+                    for coin in coins:
+                        if len(week_df) > 0:
+                            week_df[coin] = get_today_chart(coin,week_start_ts,ts,week_df)[coin]
+                        else:
+                            week_df = week_df.append(get_today_chart(coin,week_start_ts,ts,week_df))
+                    
+                    
+                    week_df['Date'] = pd.to_datetime(week_df['Date'], unit = 'ms')
+
+                    currencies = week_df.columns.tolist()
+                    currencies[:] = [x for x in currencies if x != 'Date']
+
+
+                    week_df['Value'] = 0
+
+                    for coin in currencies:
+                        for index, row in week_df.iterrows():
+                            week_df.at[index, 'Value'] = week_df.at[index, 'Value'] + (week_df.at[index, coin]*final_df.at[coin,'CurrAmount'])
+
+
+                    price = df_price.sum(axis=0)
+                    price = price['Total_Price']
+                    sold = df_sold.sum(axis=0)
+                    sold = sold['Sold_Value']
+
+                    week_df['Profit'] = week_df['Value'] + sold - price
+                    week_df = week_df.set_index('Date')
+                    week_profit = week_df['Profit'] 
+
+                    print(week_df)
+                    print(week_profit)
+
+                    col1.line_chart(week_profit)
+                    col1.dataframe(week_df)
             
             
             # if st.button('Show my diversity'):
