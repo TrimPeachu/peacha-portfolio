@@ -96,6 +96,26 @@ def get_price(currency):
     elif currency == 'NMR':
         price = cg.get_price(ids = 'numeraire', vs_currencies = 'eur', include_24hr_change='true')
         curr = 'numeraire'
+    elif currency == 'STMX':
+        price = cg.get_price(ids = 'storm', vs_currencies = 'eur', include_24hr_change='true')
+        curr = 'storm'
+    elif currency == 'CAKE':
+        price = cg.get_price(ids = 'pancakeswap-token', vs_currencies = 'eur', include_24hr_change='true')
+        curr = 'pancakeswap-token'
+    elif currency == 'BNB':
+        price = cg.get_price(ids = 'binancecoin', vs_currencies = 'eur', include_24hr_change='true')
+        curr = 'binancecoin'
+    elif currency == 'CHZ':
+        price = cg.get_price(ids = 'chiliz', vs_currencies = 'eur', include_24hr_change='true')
+        curr = 'chiliz'
+    elif currency == 'CTSI':
+        price = cg.get_price(ids = 'cartesi', vs_currencies = 'eur', include_24hr_change='true')
+        curr = 'cartesi'
+    elif currency == 'LUNA':
+        price = cg.get_price(ids = 'terra-luna', vs_currencies = 'eur', include_24hr_change='true')
+        curr = 'terra-luna'
+
+    
 
 
     clean_price = price.get(curr, {}).get('eur')
@@ -193,6 +213,24 @@ def get_history(currency, timestamp, df):
     elif currency == 'NMR':
         history_price = cg.get_coin_market_chart_range_by_id(id = 'numeraire', vs_currency = 'eur', from_timestamp = '1619900343', to_timestamp = str(timestamp))
         curr = 'numeraire'
+    elif currency == 'STMX':
+        history_price = cg.get_coin_market_chart_range_by_id(ids = 'storm', vs_currency = 'eur', from_timestamp = '1619900343', to_timestamp = str(timestamp))
+        curr = 'storm'
+    elif currency == 'CAKE':
+        history_price = cg.get_coin_market_chart_range_by_id(ids = 'pancakeswap-token', vs_currency = 'eur', from_timestamp = '1619900343', to_timestamp = str(timestamp))
+        curr = 'pancakeswap-token'
+    elif currency == 'BNB':
+        history_price = cg.get_coin_market_chart_range_by_id(ids = 'binancecoin', vs_currency = 'eur', from_timestamp = '1619900343', to_timestamp = str(timestamp))
+        curr = 'binancecoin'
+    elif currency == 'CHZ':
+        history_price = cg.get_coin_market_chart_range_by_id(ids = 'chiliz', vs_currency = 'eur', from_timestamp = '1619900343', to_timestamp = str(timestamp))
+        curr = 'chiliz'
+    elif currency == 'CTSI':
+        history_price = cg.get_coin_market_chart_range_by_id(ids = 'cartesi', vs_currency = 'eur', from_timestamp = '1619900343', to_timestamp = str(timestamp))
+        curr = 'cartesi'
+    elif currency == 'LUNA':
+        history_price = cg.get_coin_market_chart_range_by_id(ids = 'terra-luna', vs_currency = 'eur', from_timestamp = '1619900343', to_timestamp = str(timestamp))
+        curr = 'terra-luna'
     
     history_price = history_price['prices']
 
@@ -300,6 +338,24 @@ def get_today_chart(currency, start_day, timestamp, df):
     elif currency == 'NMR':
         today_price = cg.get_coin_market_chart_range_by_id(id = 'numeraire', vs_currency = 'eur', from_timestamp = start_day, to_timestamp = str(timestamp))
         curr = 'numeraire'
+    elif currency == 'STMX':
+        price = cg.get_coin_market_chart_range_by_id(ids = 'storm', vs_currency = 'eur', from_timestamp = start_day, to_timestamp = str(timestamp))
+        curr = 'storm'
+    elif currency == 'CAKE':
+        price = cg.get_coin_market_chart_range_by_id(ids = 'pancakeswap-token', vs_currency = 'eur', from_timestamp = start_day, to_timestamp = str(timestamp))
+        curr = 'pancakeswap-token'
+    elif currency == 'BNB':
+        price = cg.get_coin_market_chart_range_by_id(ids = 'binancecoin', vs_currency = 'eur', from_timestamp = start_day, to_timestamp = str(timestamp))
+        curr = 'binancecoin'
+    elif currency == 'CHZ':
+        price = cg.get_coin_market_chart_range_by_id(ids = 'chiliz', vs_currency = 'eur', from_timestamp = start_day, to_timestamp = str(timestamp))
+        curr = 'chiliz'
+    elif currency == 'CTSI':
+        price = cg.get_coin_market_chart_range_by_id(ids = 'cartesi', vs_currency = 'eur', from_timestamp = start_day, to_timestamp = str(timestamp))
+        curr = 'cartesi'
+    elif currency == 'LUNA':
+        price = cg.get_coin_market_chart_range_by_id(ids = 'terra-luna', vs_currency = 'eur', from_timestamp = start_day, to_timestamp = str(timestamp))
+        curr = 'terra-luna'
     
 
     today_price = today_price['prices']

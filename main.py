@@ -60,6 +60,9 @@ if user_input:
     elif user_input == st.secrets['tomas_private']['pass2']:
         df = df[df['Owner'] == 'Dodo']
         continue_script = True
+    elif user_input == st.secrets['tomas_private']['pass3']:
+        df = df[df['Owner'] == 'Oco']
+        continue_script = True
     else:
         col1.write("### Incorrect password")
         continue_script = False
@@ -67,7 +70,7 @@ if user_input:
 
     # Get info from gecko to df
 
-    if user_input == st.secrets['tomas_private']['pass1'] or st.secrets['tomas_private']['pass2']:
+    if user_input == st.secrets['tomas_private']['pass1'] or st.secrets['tomas_private']['pass2'] or st.secrets['tomas_private']['pass3']:
         if continue_script:
             coins = df['COIN'].unique().tolist()
             # coins2= [x for x in coins if x not in  ['UNI', 'XRP', 'THETA', 'BTT', 'ENJ', 'SHIB']]
@@ -275,6 +278,33 @@ if user_input:
                     col1.line_chart(week_profit)
                     col1.dataframe(week_df)
             
+                if st.button("Best picks"):
+                    df_pick = pd.DataFrame()
+                    print(df)
+                    df_pick['coin'] = df['COIN']
+                    df_pick['bought_Price'] = df['PRICE']
+                    df_pick['amount'] = df['AMOUNT']
+                    df_pick['curr_Price'] = df['Current_Price']
+                    df_pick['x'] = df_pick['curr_Price'] / df_pick['bought_Price']
+
+                    df_pick = df_pick.sort_values(by=['coin', 'bought_Price'])
+                    df_pick = df_pick.drop_duplicates(subset = ['coin'])
+                    df_pick = df_pick.sort_values(by=['x'], ascending = False)
+                    df_pick = df_pick.set_index('coin')
+
+                    col1.table(df_pick)
+                
+                # if st.button('Best sold'):
+                #     df_best_sold = df_sold
+                #     for index, row in df_best_sold.iterrows():
+                #         df_best_sold.at[index,'curr_Price'] = final_df[index,'Price']
+                #     # df_best_sold['x'] = df_best_sold
+                #     # df_best_sold = df_best_sold.sort_values(by=['x'])
+                #     col1.table(df_best_sold)
+
+
+                    
+                    
             
             # if st.button('Show my diversity'):
             #    plt.figure(figsize=(16,8))
