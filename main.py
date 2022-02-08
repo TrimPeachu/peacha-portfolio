@@ -97,12 +97,15 @@ if user_input:
                 # price, change = get_price(df.at[index,'COIN'])
                 price = price_dict[df.at[index,'COIN']]
                 change = change_dict[df.at[index,'COIN']]
-                print(df[df['Owner'] == 'Tomas'])
+                # print(df[df['Owner'] == 'Tomas'])
 
-                df.at[index, 'Current_Price'] = price
-                df.at[index, 'Current_Value'] =  price * df.at[index, 'AMOUNT']
-                df.at[index, '24hChange'] = change
-                df.at[index, 'Total_Price'] = df.at[index, 'PRICE'] * df.at[index, 'AMOUNT']
+                try:
+                    df.at[index, 'Current_Price'] = price
+                    df.at[index, 'Current_Value'] =  price * df.at[index, 'AMOUNT']
+                    df.at[index, '24hChange'] = change
+                    df.at[index, 'Total_Price'] = df.at[index, 'PRICE'] * df.at[index, 'AMOUNT']
+                except Exception as e:
+                    print (row)
 
             # Groupby 
             df_value = df.groupby(['COIN'])[['Current_Value', 'AMOUNT']].sum()
