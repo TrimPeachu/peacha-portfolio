@@ -97,7 +97,7 @@ if user_input:
                 # price, change = get_price(df.at[index,'COIN'])
                 price = price_dict[df.at[index,'COIN']]
                 change = change_dict[df.at[index,'COIN']]
-                print(df)
+                print(df['Owner'] == 'Tomas')
 
                 df.at[index, 'Current_Price'] = price
                 df.at[index, 'Current_Value'] =  price * df.at[index, 'AMOUNT']
