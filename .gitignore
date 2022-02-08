@@ -1,3 +1,7 @@
 /.streamlit
 /data
 logo.png
+skuska.py
+historic.py
+icon.ico
+__pycache__/

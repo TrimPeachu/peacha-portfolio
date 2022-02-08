@@ -5,7 +5,7 @@ import pandas as pd
 cg = CoinGeckoAPI()
 
 def get_price(currency):
-    # print(currency)
+    print(currency)
     if currency == 'ADA':
         price = cg.get_price(ids ='cardano', vs_currencies = 'eur' , include_24hr_change='true')
         curr = 'cardano'
@@ -114,8 +114,21 @@ def get_price(currency):
     elif currency == 'LUNA':
         price = cg.get_price(ids = 'terra-luna', vs_currencies = 'eur', include_24hr_change='true')
         curr = 'terra-luna'
-
-    
+    elif currency == 'AXS':
+        price = cg.get_price(ids = 'axie-infinity', vs_currencies = 'eur', include_24hr_change='true')
+        curr = 'axie-infinity'
+    elif currency == 'AAVE':
+        price = cg.get_price(ids = 'aave', vs_currencies = 'eur', include_24hr_change='true')
+        curr = 'aave'
+    elif currency == 'SAND':
+        price = cg.get_price(ids = 'the-sandbox', vs_currencies = 'eur', include_24hr_change='true')
+        curr = 'the-sandbox'
+    elif currency == 'MANA':
+        price = cg.get_price(ids = 'decentraland', vs_currencies = 'eur', include_24hr_change='true')
+        curr = 'decentraland'
+    elif currency == 'GALA':
+        price = cg.get_price(ids = 'gala', vs_currencies = 'eur', include_24hr_change='true')
+        curr = 'gala'
 
 
     clean_price = price.get(curr, {}).get('eur')
@@ -231,7 +244,22 @@ def get_history(currency, timestamp, df):
     elif currency == 'LUNA':
         history_price = cg.get_coin_market_chart_range_by_id(ids = 'terra-luna', vs_currency = 'eur', from_timestamp = '1619900343', to_timestamp = str(timestamp))
         curr = 'terra-luna'
-    
+    elif currency == 'AXS':
+        history_price = cg.get_coin_market_chart_range_by_id(ids = 'axie-infinity', vs_currency = 'eur', from_timestamp = '1619900343', to_timestamp = str(timestamp))
+        curr = 'axie-infinity'
+    elif currency == 'AAVE':
+        history_price = cg.get_coin_market_chart_range_by_id(ids = 'aave', vs_currency = 'eur', from_timestamp = '1619900343', to_timestamp = str(timestamp))
+        curr = 'aave'
+    elif currency == 'SAND':
+        history_price = cg.get_coin_market_chart_range_by_id(ids = 'the-sandbox', vs_currency = 'eur', from_timestamp = '1619900343', to_timestamp = str(timestamp))
+        curr = 'the-sandbox'
+    elif currency == 'MANA':
+        history_price = cg.get_coin_market_chart_range_by_id(ids = 'decentraland', vs_currency = 'eur', from_timestamp = '1619900343', to_timestamp = str(timestamp))
+        curr = 'decentraland'
+    elif currency == 'GALA':
+        history_price = cg.get_coin_market_chart_range_by_id(ids = 'gala', vs_currency = 'eur', from_timestamp = '1619900343', to_timestamp = str(timestamp))
+        curr = 'gala'
+
     history_price = history_price['prices']
 
     if len(df) > 0:
@@ -354,9 +382,23 @@ def get_today_chart(currency, start_day, timestamp, df):
         price = cg.get_coin_market_chart_range_by_id(ids = 'cartesi', vs_currency = 'eur', from_timestamp = start_day, to_timestamp = str(timestamp))
         curr = 'cartesi'
     elif currency == 'LUNA':
-        price = cg.get_coin_market_chart_range_by_id(ids = 'terra-luna', vs_currency = 'eur', from_timestamp = start_day, to_timestamp = str(timestamp))
+        price = cg.get_coin_market_chart_range_by_id(ids = 'cartesi', vs_currency = 'eur', from_timestamp = start_day, to_timestamp = str(timestamp))  
         curr = 'terra-luna'
-    
+    elif currency == 'AXS':
+        price = cg.get_coin_market_chart_range_by_id(ids = 'axie-infinity', vs_currency = 'eur', from_timestamp = start_day, to_timestamp = str(timestamp))      
+        curr = 'axie-infinity'
+    elif currency == 'AAVE':
+        price = cg.get_coin_market_chart_range_by_id(ids = 'aave', vs_currency = 'eur', from_timestamp = start_day, to_timestamp = str(timestamp))        
+        curr = 'aave'
+    elif currency == 'SAND':
+        price = cg.get_coin_market_chart_range_by_id(ids = 'the-sandbox', vs_currency = 'eur', from_timestamp = start_day, to_timestamp = str(timestamp))        
+        curr = 'the-sandbox'
+    elif currency == 'MANA':
+        price = cg.get_coin_market_chart_range_by_id(ids = 'decentraland', vs_currency = 'eur', from_timestamp = start_day, to_timestamp = str(timestamp))        
+        curr = 'decentraland'
+    elif currency == 'GALA':
+        price = cg.get_coin_market_chart_range_by_id(ids = 'gala', vs_currency = 'eur', from_timestamp = start_day, to_timestamp = str(timestamp))        
+        curr = 'gala'
 
     today_price = today_price['prices']
 

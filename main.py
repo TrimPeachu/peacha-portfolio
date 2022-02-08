@@ -87,13 +87,17 @@ if user_input:
             price_dict = {}
             change_dict = {}
 
-            for coin in coins:
-                price_dict[coin], change_dict[coin] = get_price(coin)
+            try:
+                for coin in coins:
+                    price_dict[coin], change_dict[coin] = get_price(coin)
+            except Exception as e:
+                print(f'No  data for {coin} \n check if it was added to the coin list ')
             
             for index, row in df.iterrows():
                 # price, change = get_price(df.at[index,'COIN'])
                 price = price_dict[df.at[index,'COIN']]
                 change = change_dict[df.at[index,'COIN']]
+                print(df)
 
                 df.at[index, 'Current_Price'] = price
                 df.at[index, 'Current_Value'] =  price * df.at[index, 'AMOUNT']
