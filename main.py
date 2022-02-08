@@ -105,7 +105,8 @@ if user_input:
                     df.at[index, '24hChange'] = change
                     df.at[index, 'Total_Price'] = df.at[index, 'PRICE'] * df.at[index, 'AMOUNT']
                 except Exception as e:
-                    print (row)
+                    print(f"Error for coin {df.at[index,'COIN']}")
+                    print(row)
 
             # Groupby 
             df_value = df.groupby(['COIN'])[['Current_Value', 'AMOUNT']].sum()
